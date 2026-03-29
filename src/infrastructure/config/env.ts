@@ -13,8 +13,12 @@ const envSchema = z.object({
     VITE_CLOUDINARY_UPLOAD_PRESET: z.string().min(1, 'VITE_CLOUDINARY_UPLOAD_PRESET is required'),
 
     // Phase 0-B: بيانات العيادة (لا hardcode في الكود)
-    VITE_CLINIC_PHONE: egyptianPhone.optional().or(z.literal('01XXXXXXXXX')),
-    VITE_CLINIC_WHATSAPP: egyptianPhone.optional().or(z.literal('01XXXXXXXXX')),
+    VITE_CLINIC_PHONE: egyptianPhone.optional()
+        .or(z.literal('01XXXXXXXXX'))
+        .or(z.literal('(01XXXXXXXXX)')),
+    VITE_CLINIC_WHATSAPP: egyptianPhone.optional()
+        .or(z.literal('01XXXXXXXXX'))
+        .or(z.literal('(01XXXXXXXXX)')),
 
     // Sentry (اختياري)
     VITE_SENTRY_DSN: z.string().url().optional(),
