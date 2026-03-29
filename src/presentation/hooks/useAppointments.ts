@@ -54,6 +54,24 @@ export function useTodayAppointments() {
 
     useEffect(() => {
         const today = toISODateString(new Date());
+        
+        // 1. Initial manual fetch
+        const fetchInitial = async () => {
+            try {
+                const result = await app.appointmentService.getAppointmentsByDate(today);
+                if (result.success && result.data) {
+                    setAppointments(result.data.appointments);
+                }
+            } catch (err) {
+                logger.error('Failed to fetch initial appointments:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchInitial();
+
+        // 2. Realtime subscription
         const unsubscribe = app.appointmentService.subscribeByDate(today, (data) => {
             setAppointments(data);
             setLoading(false);
