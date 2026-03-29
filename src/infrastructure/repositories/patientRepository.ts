@@ -34,9 +34,8 @@ export class PatientRepository {
         const from = (page - 1) * pageSize;
         const to = from + pageSize - 1;
 
-        // FIXED: استخدام count: 'estimated' — أسرع من 'exact' وآمن للـ authenticated users
-        // 'exact' يمكن أن يسبب مشاكل مع بعض RLS configurations
-        let supabaseQuery = supabase.from('patients').select('*', { count: 'estimated' });
+        // FIXED: Using count: 'exact' for precision in the dashboard.
+        let supabaseQuery = supabase.from('patients').select('*', { count: 'exact' });
 
         if (isActive !== undefined) supabaseQuery = supabaseQuery.eq('is_active', isActive);
         if (query) {
