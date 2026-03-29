@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-// Egyptian phone regex: 01X XXXXXXXXX (11 digits starting with 01)
-const egyptianPhone = z.string().regex(/^01[0-9]{9}$/, 'يجب أن يكون رقم مصري صحيح (01XXXXXXXXX)');
 
 const envSchema = z.object({
     // Supabase
