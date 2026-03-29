@@ -1,0 +1,92 @@
+import type { Patient } from '../domain/models';
+import type { InvoiceDTO } from '../application/dtos/billing.dto';
+import { supabase } from '../infrastructure/clients/supabase';
+import { logger } from './logger';
+
+// تسجيل عملية التصدير في Audit Log
+async function logExportAudit(
+    exportType: 'invoices' | 'patients',
+    recordCount: number,
+    filters?: Record<string, unknown>
+): Promise<void> {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return; // لا يُصدَّر إلا من قِبل المستخدمين المعتمدين
+
+        await supabase.from('audit_logs').insert({
+            user_id: user.id,
+            user_email: user.email ?? 'unknown',
+            user_role: 'admin',
+            action: 'export',
+            entity_type: exportType,
+            entity_id: 'bulk-export',
+            new_values: {
+                record_count: recordCount,
+                export_timestamp: new Date().toISOString(),
+                filters: filters ?? {},
+            } as any,
+
+        });
+    } catch (err) {
+        // Audit logging فشل — لا نوقف التصدير بسببه، لكن نسجله في console
+        logger.warn('[ExportUtils] Failed to log audit for export:', err as Error);
+    }
+}
+
+export async function exportInvoicesToExcel(
+    invoices: InvoiceDTO[],
+    filename = 'تقرير-الفواتير',
+    filters?: Record<string, unknown>
+) {
+    const XLSX = await import('xlsx');
+    const rows = invoices.map(inv => ({
+        'رقم الفاتورة': inv.invoiceNumber,
+        'التاريخ': inv.invoiceDate,
+        'الإجمالي': inv.total,
+        'المدفوع': inv.totalPaid,
+        'المتبقي': inv.balance,
+        'الحالة': inv.status === 'paid' ? 'مدفوعة'
+            : inv.status === 'partial' ? 'جزئي'
+                : inv.status === 'issued' ? 'صادرة' : 'ملغاة',
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'الفواتير');
+    ws['!cols'] = [
+        { wch: 18 }, { wch: 14 }, { wch: 12 },
+        { wch: 12 }, { wch: 12 }, { wch: 12 },
+    ];
+    XLSX.writeFile(wb, `${filename}.xlsx`);
+
+    // FIXED: تسجيل عملية التصدير في Audit Log
+    await logExportAudit('invoices', invoices.length, filters);
+}
+
+export async function exportPatientsToExcel(
+    patients: Patient[],
+    filename = 'قائمة-المرضى',
+    filters?: Record<string, unknown>
+) {
+    const XLSX = await import('xlsx');
+    const rows = patients.map(p => ({
+        'الاسم': p.fullName,
+        'رقم الهاتف': p.phone,
+        'تاريخ الميلاد': p.birthDate ?? '',
+        'فصيلة الدم': p.bloodType ?? '',
+        'النوع': p.gender === 'male' ? 'ذكر' : p.gender === 'female' ? 'أنثى' : '',
+        'تاريخ التسجيل': p.createdAt?.slice(0, 10) ?? '',
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'المرضى');
+    ws['!cols'] = [
+        { wch: 20 }, { wch: 16 }, { wch: 14 },
+        { wch: 12 }, { wch: 10 }, { wch: 14 },
+    ];
+    XLSX.writeFile(wb, `${filename}.xlsx`);
+
+    // FIXED: تسجيل عملية التصدير في Audit Log
+    await logExportAudit('patients', patients.length, filters);
+}

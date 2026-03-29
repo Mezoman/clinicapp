@@ -1,0 +1,32 @@
+{
+    "name": "عيادة د. محمد أسامة الرفاعي",
+    "short_name": "Dr. Mohamed Osama",
+    "description": "نظام إدارة عيادة دكتور محمد أسامة الرفاعي وحجز المواعيد",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0EA5E9",
+    "orientation": "portrait",
+    "dir": "rtl",
+    "lang": "ar",
+    "icons": [
+        {
+            "src": "favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any maskable"
+        }
+    ]
+}

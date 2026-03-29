@@ -1,0 +1,21 @@
+{
+    "analysis": {
+        "deep": true,
+        "strict": true,
+        "securityFirst": true,
+        "architectureEnforcement": true,
+        "performanceEnforcement": true
+    },
+    "failOn": [
+        "securityRisk",
+        "exposedSecrets",
+        "missingRLS",
+        "unsafeSQL",
+        "architecturalViolation",
+        "memoryLeak",
+        "unprotectedRoute"
+    ],
+    "production": {
+        "allowOverrides": false
+    }
+}

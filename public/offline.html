@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="عيادة الدكتور محمد أسامة الرفاعي — الصفحة غير متصلة بالإنترنت حالياً" />
+  <title>غير متصل — عيادة د. الرفاعي</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 420px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .icon {
+      width: 96px;
+      height: 96px;
+      background: rgba(239, 68, 68, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      border: 2px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .icon svg {
+      width: 48px;
+      height: 48px;
+      color: #ef4444;
+      stroke: #ef4444;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #f8fafc;
+    }
+
+    p {
+      color: #cbd5e1; /* Increased contrast from #94a3b8 (6.6:1 -> 10.5:1) */
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .clinic-name {
+      display: inline-block;
+      color: #60a5fa;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      padding: 0.4rem 1rem;
+      background: rgba(96, 165, 250, 0.1);
+      border-radius: 9999px;
+      border: 1px solid rgba(96, 165, 250, 0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+    }
+
+    .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .status {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #94a3b8; /* Increased contrast from #64748b (3.5:1 -> 6.6:1) */
+    }
+
+    .pulse {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-left: 6px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" />
+      </svg>
+    </div>
+
+    <div class="clinic-name">🦷 عيادة الدكتور محمد أسامة الرفاعي</div>
+
+    <h1>لا يوجد اتصال بالإنترنت</h1>
+
+    <p>
+      يبدو أنك غير متصل بالإنترنت حالياً.<br />
+      تحقق من اتصالك وأعد المحاولة.
+    </p>
+
+    <button id="retry-btn" class="btn">
+      إعادة المحاولة
+    </button>
+
+    <p class="status">
+      <span class="pulse"></span>
+      جاري البحث عن اتصال...
+    </p>
+  </div>
+
+  <script>
+    // Auto-reload when connection is restored
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+
+    // Retry button with loading state
+    const btn = document.getElementById('retry-btn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        this.textContent = 'جاري التحقق...';
+        this.disabled = true;
+        setTimeout(() => window.location.reload(), 500);
+      });
+    }
+  </script>
+</body>
+</html>
