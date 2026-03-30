@@ -144,24 +144,25 @@ export const useSettings = () => {
     const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
         setIsImporting(true);
+
+        const readFileAsText = (f: File): Promise<string> =>
+            new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (ev) => resolve(ev.target?.result as string);
+                reader.onerror = () => reject(new Error('فشل في قراءة الملف'));
+                reader.readAsText(f);
+            });
+
         try {
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                try {
-                    const json = event.target?.result as string;
-                    await importDatabase(json);
-                    toast.success('تم استيراد البيانات بنجاح، يرجى تحديث الصفحة');
-                    reloadTimerRef.current = setTimeout(() => window.location.reload(), 2000);
-                } catch (err) {
-                    logger.error(err);
-                    toast.error('ملف غير صالح أو خطأ في الاستيراد');
-                }
-            };
-            reader.readAsText(file);
+            const json = await readFileAsText(file);
+            await importDatabase(json);
+            toast.success('تم استيراد البيانات بنجاح، يرجى تحديث الصفحة');
+            reloadTimerRef.current = setTimeout(() => { window.location.href = '/admin'; }, 2000);
         } catch (err) {
             logger.error(err);
-            toast.error('فشل في قراءة الملف');
+            toast.error(err instanceof Error ? err.message : 'ملف غير صالح أو خطأ في الاستيراد');
         } finally {
             setIsImporting(false);
             if (e.target) e.target.value = '';
@@ -178,7 +179,7 @@ export const useSettings = () => {
             await factoryReset();
             toast.success('تمت إعادة ضبط المصنع بنجاح');
             logAudit('delete', 'system', 'all', null, null, 'SUPER_ADMIN executed factory reset');
-            reloadTimerRef.current = setTimeout(() => window.location.reload(), 2000);
+            reloadTimerRef.current = setTimeout(() => { window.location.href = '/admin'; }, 2000);
             return true;
         } catch (err) {
             logger.error(err);

@@ -140,6 +140,7 @@ export default function MedicalRecords() {
     const [patientResults, setPatientResults] = useState<PatientDTO[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [dateRangeFilter, setDateRangeFilter] = useState('all');
+    const [doctorFilter, setDoctorFilter] = useState<string>('all');
 
     const modalRef = useRef<HTMLDivElement>(null);
     useFocusTrap(modalRef, showModal, () => setShowModal(false));
@@ -350,10 +351,20 @@ export default function MedicalRecords() {
             result = result.filter(r => new Date(r.visitDate) >= pastDate);
         }
 
-        // doctorFilter is reserved for future use when doctor_name column is added to medical_records table
+        // فلتر الطبيب
+        if (doctorFilter !== 'all') {
+            result = result.filter(r => r.doctorName === doctorFilter);
+        }
 
         return result;
-    }, [records, searchTerm, dateRangeFilter]);
+    }, [records, searchTerm, dateRangeFilter, doctorFilter]);
+
+    const uniqueDoctors = useMemo(() => {
+        const names = records
+            .map(r => r.doctorName)
+            .filter((n): n is string => !!n && n.trim() !== '');
+        return Array.from(new Set(names)).sort();
+    }, [records]);
 
     return (
         <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-screen space-y-12">
@@ -393,14 +404,18 @@ export default function MedicalRecords() {
                             aria-label="بحث في السجلات الطبية"
                         />
                     </div>
-                    <div className="relative group/sel opacity-50 cursor-not-allowed" title="سيتم تفعيل هذا الفلتر قريباً">
-                        <User className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 size-5" aria-hidden="true" />
+                    <div className="relative group/sel">
+                        <User className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 size-5 group-hover/sel:text-primary transition-colors" aria-hidden="true" />
                         <select
-                            disabled
-                            className="w-full pr-12 pl-8 py-4 bg-[var(--bg-page)] border border-transparent rounded-2xl text-sm appearance-none cursor-not-allowed font-black text-[var(--text-primary)] transition-all outline-none"
-                            aria-label="تصفية حسب الطبيب (غير متاح حالياً)"
+                            value={doctorFilter}
+                            onChange={(e) => setDoctorFilter(e.target.value)}
+                            className="w-full pr-12 pl-8 py-4 bg-[var(--bg-page)] border border-transparent rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary/20 text-sm appearance-none cursor-pointer font-black text-[var(--text-primary)] transition-all outline-none"
+                            aria-label="تصفية حسب الطبيب"
                         >
                             <option value="all">كل الأطباء</option>
+                            {uniqueDoctors.map(name => (
+                                <option key={name} value={name}>{name}</option>
+                            ))}
                         </select>
                     </div>
                     <div className="relative group/sel">

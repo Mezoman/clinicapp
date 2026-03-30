@@ -1,8 +1,3 @@
-/*
-⚠️ REQUIRED DB MIGRATION (run once in Supabase SQL editor):
-ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_amount NUMERIC DEFAULT 0;
-ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_rate   NUMERIC DEFAULT 0;
-*/
 import { supabase } from '../clients/supabase';
 import { Invoice, type InvoiceProps, type InvoiceStatus, type Payment } from '../../domain/models';
 import { AppError, ErrorCode } from '../../lib/errors';
@@ -221,8 +216,8 @@ export class BillingRepository {
                 subtotal: row.subtotal || 0,
                 discount: row.discount || 0,
                 discountReason: row.discount_reason || undefined,
-                taxAmount: (row as any).tax_amount ?? 0,
-                taxRate: (row as any).tax_rate ?? 0,
+                taxAmount: row.tax_amount,
+                taxRate: row.tax_rate,
                 total: row.total_amount,
                 payments: payments.map(p => ({
                     amount: p.amount,

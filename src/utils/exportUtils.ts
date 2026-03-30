@@ -13,10 +13,17 @@ async function logExportAudit(
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return; // لا يُصدَّر إلا من قِبل المستخدمين المعتمدين
 
+        // جلب الدور الفعلي من جدول admin_users
+        const { data: adminUser } = await supabase
+            .from('admin_users')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle();
+
         await supabase.from('audit_logs').insert({
             user_id: user.id,
             user_email: user.email ?? 'unknown',
-            user_role: 'admin',
+            user_role: adminUser?.role ?? 'admin',
             action: 'export',
             entity_type: exportType,
             entity_id: 'bulk-export',

@@ -220,6 +220,8 @@ export const databaseSchema = z.object({
                     payments: jsonSchema.nullable(),
                     notes: z.string().nullable(),
                     invoice_date: z.string(),
+                    tax_amount: z.number(),
+                    tax_rate: z.number(),
                     created_at: z.string(),
                     updated_at: z.string()
                 }),
@@ -240,6 +242,8 @@ export const databaseSchema = z.object({
                     payments: jsonSchema.optional().nullable(),
                     notes: z.string().optional().nullable(),
                     invoice_date: z.string().optional(),
+                    tax_amount: z.number().optional(),
+                    tax_rate: z.number().optional(),
                     created_at: z.string().optional(),
                     updated_at: z.string().optional()
                 }),
@@ -260,6 +264,8 @@ export const databaseSchema = z.object({
                     payments: jsonSchema.optional().nullable(),
                     notes: z.string().optional().nullable(),
                     invoice_date: z.string().optional(),
+                    tax_amount: z.number().optional(),
+                    tax_rate: z.number().optional(),
                     created_at: z.string().optional(),
                     updated_at: z.string().optional()
                 }),

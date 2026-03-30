@@ -33,9 +33,10 @@ export class CreateInvoiceUseCase {
                         total: s.unitPrice * s.quantity
                     })),
                     discount: rest.discount ?? 0, // Added default for discount
-                    taxAmount: rest.taxAmount ?? 0,
-                    taxRate: rest.taxRate ?? 0,
-                    ...(notes !== undefined ? { notes } : {})
+                    taxAmount: rest.taxAmount,
+                    taxRate: rest.taxRate,
+                    discountReason: rest.discountReason,
+                    ...(notes === undefined ? {} : { notes })
                 });
 
                 // 2. Persist via repository

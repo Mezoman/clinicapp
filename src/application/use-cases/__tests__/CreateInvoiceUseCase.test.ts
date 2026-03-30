@@ -33,6 +33,9 @@ describe('CreateInvoiceUseCase', () => {
             invoiceDate: '2023-01-01',
             services: services,
             discount: 10,
+            taxRate: 0,
+            taxAmount: 0,
+            discountReason: undefined,
             notes: 'Test'
         };
 

@@ -258,6 +258,8 @@ export type Database = {
                     payments: Json | null
                     notes: string | null
                     invoice_date: string
+                    tax_amount: number
+                    tax_rate: number
                     created_at: string
                     updated_at: string
                 }
@@ -278,6 +280,8 @@ export type Database = {
                     payments?: Json | null
                     notes?: string | null
                     invoice_date?: string
+                    tax_amount?: number
+                    tax_rate?: number
                     created_at?: string
                     updated_at?: string
                 }
@@ -298,6 +302,8 @@ export type Database = {
                     payments?: Json | null
                     notes?: string | null
                     invoice_date?: string
+                    tax_amount?: number
+                    tax_rate?: number
                     created_at?: string
                     updated_at?: string
                 }

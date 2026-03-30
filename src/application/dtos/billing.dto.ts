@@ -25,13 +25,14 @@ export interface InvoiceDTO {
     readonly services: readonly InvoiceServiceDTO[];
     readonly subtotal: number;
     readonly discount: number;
-    readonly taxRate?: number;
-    readonly taxAmount?: number;
+    readonly taxRate: number;
+    readonly taxAmount: number;
     readonly total: number;
     readonly totalPaid: number;
     readonly balance: number;
     readonly status: string;
     readonly dueDate: string | undefined;
+    readonly discountReason: string | undefined;
     readonly notes: string | undefined;
 }
 
@@ -46,8 +47,9 @@ export interface CreateInvoiceDTO {
         readonly unitPrice: number;
     }[];
     readonly discount: number;
-    readonly taxRate?: number;
-    readonly taxAmount?: number;
+    readonly taxRate: number;
+    readonly taxAmount: number;
+    readonly discountReason: string | undefined;
     readonly notes: string | undefined;
 }
 

@@ -47,3 +47,18 @@ export async function uploadToCloudinary(file: File): Promise<CloudinaryResponse
 
     return response.json();
 }
+
+/**
+ * حذف صورة من Cloudinary عبر Supabase Edge Function
+ * ⚠️ ملاحظة: يتطلب نشر Edge Function `delete-cloudinary-image` في Supabase
+ * مع إعداد المتغيرات: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+ */
+export async function deleteFromCloudinary(publicId: string): Promise<void> {
+    const { supabase } = await import('./supabase');
+    const { error } = await supabase.functions.invoke('delete-cloudinary-image', {
+        body: { public_id: publicId }
+    });
+    if (error) {
+        throw new Error(`Failed to delete image: ${error.message}`);
+    }
+}

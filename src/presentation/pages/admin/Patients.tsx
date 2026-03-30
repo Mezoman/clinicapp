@@ -425,7 +425,7 @@ export default function Patients() {
                                             value={form.nationalId}
                                             onChange={(e) => setForm({ ...form, nationalId: e.target.value })}
                                             className="w-full bg-[var(--bg-page)] border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-[var(--text-primary)] font-numbers"
-                                            placeholder="2990101XXXXXXXX"
+                                            placeholder="29901010000000"
                                         />
                                     </div>
                                     <div className="space-y-3">

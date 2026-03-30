@@ -87,7 +87,7 @@ export class Invoice {
         invoiceDate: string;
         services: readonly InvoiceService[];
         discount?: number;
-        discountReason?: string;
+        discountReason?: string | undefined;
         taxAmount?: number;
         taxRate?: number;
         dueDate?: string;
@@ -170,7 +170,12 @@ export class Invoice {
             throw new DomainError('OVERPAYMENT_NOT_ALLOWED', `Overpayment detected. Remaining balance is ${this.balance}`);
         }
 
-        const newStatus: InvoiceStatus = Math.abs(newBalance) < 0.01 ? 'paid' : (newTotalPaid > 0 ? 'partial' : 'issued');
+        let newStatus: InvoiceStatus = 'issued';
+        if (Math.abs(newBalance) < 0.01) {
+            newStatus = 'paid';
+        } else if (newTotalPaid > 0) {
+            newStatus = 'partial';
+        }
 
         return new Invoice({
             ...this.props,

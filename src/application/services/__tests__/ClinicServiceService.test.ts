@@ -31,8 +31,12 @@ describe('ClinicServiceService', () => {
         expect(result.success).toBe(true);
         if (result.success && result.data) {
             expect(result.data).toHaveLength(1);
-            expect(result.data[0]?.id).toBe('1');
-            expect(result.data[0]?.name).toBe('Test Service');
+            const first = result.data[0];
+            expect(first).toBeDefined();
+            if (first) {
+                expect(first.id).toBe('1');
+                expect(first.name).toBe('Test Service');
+            }
         }
     });
 

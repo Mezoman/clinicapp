@@ -7,6 +7,7 @@ export class BillingMapper {
         return {
             ...rest,
             patientName: patientName ?? undefined,
+            discountReason: rest.discountReason ?? undefined,
             notes: notes ?? undefined,
             services: invoice.services.map(s => ({
                 serviceId: s.serviceId,

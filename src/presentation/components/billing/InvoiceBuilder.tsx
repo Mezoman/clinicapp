@@ -16,6 +16,7 @@ export interface CreateInvoiceFormData {
     readonly discount: number;
     readonly taxRate: number;
     readonly taxAmount: number;
+    readonly discountReason: string | undefined;
     readonly notes: string;
 }
 
@@ -35,6 +36,7 @@ export default function InvoiceBuilder({ initialPatient, onSubmit, onCancel, sav
         discount: 0,
         taxRate: 0,
         taxAmount: 0,
+        discountReason: undefined,
         notes: '',
     });
 
@@ -106,6 +108,7 @@ export default function InvoiceBuilder({ initialPatient, onSubmit, onCancel, sav
         onSubmit({
             ...form,
             taxAmount,
+            discountReason: form.discountReason || undefined,
             notes: sanitize(form.notes.trim()) || ''
         });
     };
@@ -264,6 +267,17 @@ export default function InvoiceBuilder({ initialPatient, onSubmit, onCancel, sav
                                         className="w-full bg-[var(--bg-page)] border-2 border-transparent rounded-xl px-4 py-3 text-sm font-black text-red-500 outline-none focus:border-red-500 font-numbers transition-all"
                                     />
                                 </div>
+                            </div>
+                            <div className="col-span-2">
+                                <label htmlFor="invoice-discount-reason" className="text-xs font-black text-[var(--text-secondary)] mb-2 block mr-1 uppercase tracking-widest">سبب الخصم (اختياري)</label>
+                                <input
+                                    id="invoice-discount-reason"
+                                    type="text"
+                                    value={form.discountReason || ''}
+                                    onChange={(e) => setForm(prev => ({ ...prev, discountReason: e.target.value || undefined }))}
+                                    placeholder="مثلاً: خصم نقدي، عرض خاص..."
+                                    className="w-full bg-[var(--bg-page)] border-2 border-transparent rounded-xl px-4 py-3 text-sm font-bold text-[var(--text-primary)] outline-none focus:border-primary transition-all"
+                                />
                             </div>
                             <div>
                                 <label htmlFor="invoice-tax" className="text-xs font-black text-[var(--text-secondary)] mb-2 block mr-1 uppercase tracking-widest">الضريبة (%)</label>

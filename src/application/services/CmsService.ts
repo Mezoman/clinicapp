@@ -157,6 +157,19 @@ export class CmsService {
                 try { return JSON.parse(val); } catch { return fallback; }
             };
 
+            // ── helper: handle Cloudinary images (JSON or string) ─
+            const parseImageUrl = (key: string, alias?: string): { url: string; publicId?: string } => {
+                const raw = get(key, alias || '');
+                if (!raw) return { url: '' };
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object' && parsed.url) {
+                        return { url: parsed.url, publicId: parsed.publicId };
+                    }
+                } catch { /* ignore and treat as plain URL */ }
+                return { url: raw };
+            };
+
             // ── helper: get value trying multiple key aliases ─────
             const get = (...keys: string[]): string => {
                 for (const k of keys) {
@@ -202,9 +215,15 @@ export class CmsService {
                 }))
                 : DEFAULT_WHYUS_ITEMS;
 
+            const brandingLogo = parseImageUrl('logo', 'brand_logo');
+            const heroData = parseImageUrl('hero_image', 'hero_bg');
+            const equipmentData = parseImageUrl('equipment_image');
+
             // ── Assemble DTO ──────────────────────────────────────
             const data: LandingPageDTO = {
-                logo: get('logo', 'brand_logo') || null,
+                logo: brandingLogo.url || null,
+                // We don't expose public_id in the DTO yet as it's not needed by the Home page
+                // But we could if we wanted the Home page to do something with it.
 
                 theme: {
                     primary: get('theme_primary') || '#0ea5e9',
@@ -218,7 +237,7 @@ export class CmsService {
                     subtitle: get('hero_badge', 'subtitle') || 'طب وجراحة الأسنان',
                     description: get('hero_description', 'description') || 'نقدم أفضل خدمات طب الأسنان بأحدث الأجهزة والتقنيات العالمية',
                     // 'bg' is the old DB key for hero image
-                    image: get('hero_image', 'hero_bg', 'bg') || '/hero-main.webp',
+                    image: heroData.url || get('bg') || '/hero-main.webp',
                     badge: get('hero_badge', 'subtitle') || 'خبرة أكثر من 10 سنوات',
                     cta_booking: get('hero_cta_booking', 'cta_booking') || 'احجز موعدك الآن',
                     cta_whatsapp: get('hero_cta_whatsapp', 'cta_whatsapp') || 'تواصل عبر واتساب',
@@ -243,7 +262,7 @@ export class CmsService {
 
                 whyus: {
                     title: get('whyus_title') || 'لماذا عيادة الدكتور محمد أسامة الرفاعي؟',
-                    image: get('equipment_image') || '/hero-equipment.webp',
+                    image: equipmentData.url || '/hero-equipment.webp',
                     items: whyUsItems,
                 },
 

@@ -92,7 +92,7 @@ export default function Appointments() {
                 const s = {
                     total: data.length,
                     completed: data.filter(a => a.status === 'completed').length,
-                    upcoming: data.filter(a => a.status === 'confirmed').length,
+                    upcoming: data.filter(a => a.status === 'confirmed' || a.status === 'pending').length,
                     cancelled: data.filter(a => a.status === 'cancelled' || a.status === 'no-show').length
                 };
                 setStats(s);

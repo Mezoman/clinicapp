@@ -475,3 +475,9 @@ CREATE POLICY "admin_write_landing" ON landing_content
   FOR ALL TO authenticated
   USING (get_my_role() IN ('admin', 'super_admin'))
   WITH CHECK (get_my_role() IN ('admin', 'super_admin'));
+
+-- Migration: Add tax_amount, tax_rate, and discount_reason to invoices
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_amount      NUMERIC NOT NULL DEFAULT 0;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_rate        NUMERIC NOT NULL DEFAULT 0;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS discount_reason TEXT;
+

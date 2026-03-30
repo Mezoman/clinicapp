@@ -1,18 +1,21 @@
 import React from 'react';
 import { CloudUpload, Loader2, Trash2 } from 'lucide-react';
+import { deleteFromCloudinary } from '../../../../infrastructure/clients/cloudinary';
 import { logger } from '../../../../utils/logger';
 
 interface ImageUploaderProps {
     readonly value: string;
-    readonly onUpload: (url: string) => void;
+    readonly publicId?: string;
+    readonly onUpload: (url: string, publicId?: string) => void;
     readonly label: string;
     readonly aspect?: 'square' | 'video' | 'logo';
     readonly cloudName: string;
     readonly preset: string;
 }
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onUpload, label, aspect = 'video', cloudName, preset }) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, publicId, onUpload, label, aspect = 'video', cloudName, preset }) => {
     const [uploading, setUploading] = React.useState(false);
+    const [deleting, setDeleting] = React.useState(false);
     
     const loadCloudinaryScript = (): Promise<void> => {
         return new Promise((resolve) => {
@@ -38,13 +41,30 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onUpload, l
                 (err: any, res: any) => {
                     setUploading(false);
                     if (!err && res?.event === 'success') {
-                        onUpload(res.info.secure_url);
+                        onUpload(res.info.secure_url, res.info.public_id);
                     }
                 }
             );
         } catch (error) {
             setUploading(false);
             logger.error('Cloudinary upload error', error instanceof Error ? error : new Error(String(error)));
+        }
+    };
+
+    const handleDelete = async () => {
+        setDeleting(true);
+        try {
+            if (publicId) {
+                try {
+                    await deleteFromCloudinary(publicId);
+                } catch (err) {
+                    logger.error('Failed to delete from Cloudinary', err instanceof Error ? err : new Error(String(err)));
+                    // لا توقف العملية — امسح من قاعدة البيانات على أي حال
+                }
+            }
+            onUpload('', undefined);
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -64,10 +84,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onUpload, l
                         <img src={value} alt="Uploaded" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-all backdrop-blur-[2px]">
                             <button
-                                onClick={() => onUpload('')}
-                                className="bg-red-500 text-white p-2 rounded-xl shadow-lg hover:bg-red-600 transition-all border border-red-400/20"
+                                onClick={handleDelete}
+                                disabled={deleting}
+                                className="bg-red-500 text-white p-2 rounded-xl shadow-lg hover:bg-red-600 transition-all border border-red-400/20 disabled:opacity-50"
                             >
-                                <Trash2 className="size-5" />
+                                {deleting ? <Loader2 className="size-5 animate-spin" /> : <Trash2 className="size-5" />}
                             </button>
                         </div>
                     </>

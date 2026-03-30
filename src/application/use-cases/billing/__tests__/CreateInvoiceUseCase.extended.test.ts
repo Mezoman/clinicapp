@@ -60,6 +60,9 @@ describe('CreateInvoiceUseCase', () => {
             invoiceDate: '2026-03-08',
             services: [{ serviceId: 's1', name: 'كشف', quantity: 1, unitPrice: 300 }],
             discount: 0,
+            taxRate: 0,
+            taxAmount: 0,
+            discountReason: undefined,
             notes: undefined,
         };
 
@@ -83,6 +86,9 @@ describe('CreateInvoiceUseCase', () => {
             invoiceDate: '2026-03-08',
             services: [{ serviceId: 's1', name: 'تنظيف', quantity: 2, unitPrice: 300 }],
             discount: 0,
+            taxRate: 0,
+            taxAmount: 0,
+            discountReason: undefined,
             notes: undefined,
         };
 
@@ -106,6 +112,9 @@ describe('CreateInvoiceUseCase', () => {
             invoiceDate: '2026-03-08',
             services: [{ serviceId: 's1', name: 'كشف', quantity: 1, unitPrice: 300 }],
             discount: 0,
+            taxRate: 0,
+            taxAmount: 0,
+            discountReason: undefined,
             notes: undefined,
         });
 
@@ -123,6 +132,9 @@ describe('CreateInvoiceUseCase', () => {
             invoiceDate: '2026-03-08',
             services: [{ serviceId: 's1', name: 'كشف', quantity: 1, unitPrice: 300 }],
             discount: 50,
+            taxRate: 0,
+            taxAmount: 0,
+            discountReason: undefined,
             notes: undefined,
         });
 

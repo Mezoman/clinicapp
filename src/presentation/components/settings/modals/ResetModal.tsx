@@ -22,8 +22,45 @@ export const ResetModal: React.FC<ResetModalProps> = ({ isOpen, onClose, confirm
                     </div>
                     <div className="space-y-4">
                         <h2 id="reset-modal-title" className="text-2xl font-black text-slate-900 dark:text-white font-display">تحذير أمني خطير!</h2>
-                        <p className="text-slate-500 font-bold leading-relaxed uppercase tracking-widest text-xs">لقد وصلت لآخر مرحلة من تدمير البيانات. هذا الإجراء سيمسح كل شيء ولن يبقى أي أثر لأي مريض أو موعد. الرجاء التأكد تماماً مما تفعله.</p>
+                        <p className="text-slate-500 font-bold leading-relaxed uppercase tracking-widest text-xs">هذا الإجراء سيمسح بيانات المرضى والمواعيد والسجلات الطبية والفواتير نهائياً. لا يمكن التراجع.</p>
                     </div>
+
+                    {/* توضيح ما سيُحذف وما سيبقى */}
+                    <div className="bg-red-50 dark:bg-red-900/10 rounded-2xl p-6 text-right space-y-3">
+                        <p className="text-xs font-black text-red-600 uppercase tracking-widest mb-3">
+                            ما الذي سيُحذف؟
+                        </p>
+                        <div className="space-y-2 text-xs font-bold">
+                            <div className="flex items-center gap-2 text-red-500">
+                                <span>✗</span><span>جميع بيانات المرضى</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-red-500">
+                                <span>✗</span><span>جميع المواعيد</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-red-500">
+                                <span>✗</span><span>جميع السجلات الطبية</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-red-500">
+                                <span>✗</span><span>جميع الفواتير</span>
+                            </div>
+                        </div>
+                        <hr className="border-red-200 dark:border-red-800 my-3" />
+                        <p className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2">
+                            ما الذي سيبقى؟
+                        </p>
+                        <div className="space-y-2 text-xs font-bold">
+                            <div className="flex items-center gap-2 text-emerald-600">
+                                <span>✓</span><span>إعدادات العيادة وساعات العمل</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-emerald-600">
+                                <span>✓</span><span>حسابات المستخدمين والأدوار</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-emerald-600">
+                                <span>✓</span><span>محتوى الموقع الإلكتروني (CMS)</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="space-y-4 pt-4">
                         <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em]">اكتب RESET أدناه لتأكيد الكارثة</p>
                         <input type="text" placeholder="RESET" value={confirmText} onChange={(e) => setConfirmText(e.target.value.toUpperCase())} className="w-full px-6 py-5 bg-slate-50 dark:bg-secondary-800 border-2 border-red-500/20 rounded-2xl text-center font-black tracking-[0.5em] text-xl focus:border-red-500 outline-none transition-all placeholder:tracking-normal placeholder:font-bold" />

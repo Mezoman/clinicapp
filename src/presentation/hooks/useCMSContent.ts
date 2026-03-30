@@ -51,8 +51,9 @@ export const useCMSContent = () => {
                 return newMap;
             });
             
-            // Invalidate structured data cache in CMSContext
+            // Invalidate both raw and structured data caches
             queryClient.invalidateQueries({ queryKey: ['cms', 'landing', 'raw'] });
+            queryClient.invalidateQueries({ queryKey: ['cms', 'landing', 'page'] });
             
             toast.success('تم حفظ التغييرات بنجاح');
         },
