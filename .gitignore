@@ -53,3 +53,5 @@ backups/
 
 # Supabase temp
 supabase/.temp/
+
+.vercel

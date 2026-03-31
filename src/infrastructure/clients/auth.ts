@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import type { User } from '@supabase/supabase-js';
-import type { AdminUser, AdminRole } from '../../domain/models';
+import type { AdminUser } from '../../domain/models';
 
 // ═══════════════════════════════════════════════
 // Authentication Service (Supabase)
@@ -39,8 +39,8 @@ export async function getAdminUser(uid: string): Promise<AdminUser | null> {
     return {
         uid: data.id,
         email: data.email,
-        role: data.role as AdminRole,
-        createdAt: data.created_at,
+        role: (data.role ?? 'admin') as 'admin' | 'super_admin' | 'receptionist',
+        createdAt: data.created_at ?? '',
         ...(data.display_name ? { displayName: data.display_name } : {})
     };
 }
@@ -55,4 +55,13 @@ export function subscribeToAuthState(
     return () => {
         subscription.unsubscribe();
     };
+}
+
+// FIXED: نُقل من AdminLogin.tsx لاحترام Clean Architecture
+// ويسهّل الاختبار الوحدوي لهذه العملية
+export async function resetPasswordForEmail(email: string): Promise<void> {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/admin/login`
+    });
+    if (error) throw error;
 }

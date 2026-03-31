@@ -1,0 +1,42 @@
+name: DCMS CI
+
+on:
+    push:
+        branches: [main, master, develop]
+    pull_request:
+        branches: [main, master, develop]
+
+jobs:
+    build_and_test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Lint Code
+              run: npm run lint
+
+            - name: Type Check
+              run: npx tsc --noEmit --skipLibCheck
+
+            - name: Run Unit Tests
+              run: npm test
+
+            # FIXED: إضافة التحقق من نجاح البناء قبل أي deploy
+            - name: Build Check
+              run: npm run build
+
+            # FIXED: إضافة فحص الثغرات الأمنية في الاعتماديات
+            # continue-on-error: true لعدم إيقاف الـ CI بسبب تحذيرات بسيطة
+            - name: Security Audit
+              run: npm audit --audit-level=high
+              continue-on-error: true

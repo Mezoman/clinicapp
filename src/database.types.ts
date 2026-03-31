@@ -297,8 +297,8 @@ export type Database = {
           status: string | null
           subtotal: number | null
           tax: number | null
-          tax_amount: number | null
-          tax_rate: number | null
+          tax_amount: number
+          tax_rate: number
           total_amount: number | null
           total_paid: number | null
           updated_at: string | null
@@ -322,8 +322,8 @@ export type Database = {
           status?: string | null
           subtotal?: number | null
           tax?: number | null
-          tax_amount?: number | null
-          tax_rate?: number | null
+          tax_amount?: number
+          tax_rate?: number
           total_amount?: number | null
           total_paid?: number | null
           updated_at?: string | null
@@ -347,8 +347,8 @@ export type Database = {
           status?: string | null
           subtotal?: number | null
           tax?: number | null
-          tax_amount?: number | null
-          tax_rate?: number | null
+          tax_amount?: number
+          tax_rate?: number
           total_amount?: number | null
           total_paid?: number | null
           updated_at?: string | null
@@ -662,7 +662,10 @@ export type Database = {
       }
       get_financial_summary: { Args: never; Returns: Json }
       get_my_role: { Args: never; Returns: string }
-      get_next_invoice_number: { Args: never; Returns: string }
+      get_next_invoice_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_patient_financial_summary: {
         Args: { p_patient_id: string }
         Returns: Json
@@ -685,6 +688,7 @@ export type Database = {
         Args: { p_lock_id: string; p_session_id: string }
         Returns: undefined
       }
+
     }
     Enums: {
       [_ in never]: never

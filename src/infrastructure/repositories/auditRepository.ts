@@ -25,7 +25,7 @@ export const auditRepository = {
                 p_entity_id: entityId,
                 p_old_values: serializeAuditValues(oldValues),
                 p_new_values: serializeAuditValues(newValues),
-                ...(reason ? { p_reason: reason } : {})
+                p_reason: reason ?? ''
             });
 
             const { error, data } = result;

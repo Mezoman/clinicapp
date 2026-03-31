@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { supabase } from '../../../infrastructure/clients/supabase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useRateLimit } from '../../hooks/useRateLimit';
 import { sanitize } from '../../../lib/validation';
+// FIXED: استخدام resetPasswordForEmail من AuthService بدلاً من supabase مباشرة
+// يحترم Clean Architecture ويسهّل الاختبار الوحدوي
+import { resetPasswordForEmail } from '../../../infrastructure/clients/auth';
 import { 
     Eye, 
     EyeOff, 
@@ -144,10 +146,8 @@ export default function AdminLogin() {
                                         setError('');
                                         setIsSubmitting(true);
                                         try {
-                                            const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                                                redirectTo: `${window.location.origin}/admin/login`
-                                            });
-                                            if (error) throw error;
+                                            // FIXED: استخدام الدالة من AuthService بدلاً من supabase.auth مباشرة
+                                            await resetPasswordForEmail(email.trim());
                                             toast.success('تم إرسال رابط استعادة كلمة المرور');
                                             setIsForgotPassword(false);
                                         } catch (err) {

@@ -386,7 +386,11 @@ FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Public insert slot_locks" ON public.slot_locks;
 CREATE POLICY "Public insert slot_locks" ON public.slot_locks
-FOR INSERT WITH CHECK (session_id != '');
+FOR INSERT WITH CHECK (
+    session_id != '' AND
+    expires_at > NOW() AND
+    expires_at < NOW() + INTERVAL '15 minutes'
+);
 
 DROP POLICY IF EXISTS "Public delete own slot_locks" ON public.slot_locks;
 CREATE POLICY "Public delete own slot_locks" ON public.slot_locks
@@ -415,6 +419,7 @@ GRANT SELECT ON public.audit_logs TO authenticated;
 -- Issue 2: audit_logs table RLS
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "audit_admin_read" ON audit_logs;
 CREATE POLICY "audit_admin_read" ON audit_logs
   FOR SELECT TO authenticated
   USING (get_my_role() IN ('admin', 'super_admin'));
@@ -468,9 +473,10 @@ GRANT EXECUTE ON FUNCTION public.log_audit_trail(UUID, TEXT, TEXT, TEXT, TEXT, T
 -- Issue 3: landing_content table RLS
 ALTER TABLE landing_content ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "public_read_landing" ON landing_content;
 CREATE POLICY "public_read_landing" ON landing_content
   FOR SELECT USING (true);
-
+DROP POLICY IF EXISTS "admin_write_landing" ON landing_content;
 CREATE POLICY "admin_write_landing" ON landing_content
   FOR ALL TO authenticated
   USING (get_my_role() IN ('admin', 'super_admin'))

@@ -30,3 +30,13 @@ jobs:
 
             - name: Run Unit Tests
               run: npm test
+
+            # FIXED: إضافة التحقق من نجاح البناء قبل أي deploy
+            - name: Build Check
+              run: npm run build
+
+            # FIXED: إضافة فحص الثغرات الأمنية في الاعتماديات
+            # continue-on-error: true لعدم إيقاف الـ CI بسبب تحذيرات بسيطة
+            - name: Security Audit
+              run: npm audit --audit-level=high
+              continue-on-error: true

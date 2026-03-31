@@ -3,6 +3,20 @@ import type { InvoiceDTO } from '../application/dtos/billing.dto';
 import { supabase } from '../infrastructure/clients/supabase';
 import { logger } from './logger';
 
+// ═══════════════════════════════════════════════
+// FIXED: CSV/Excel Injection Protection
+// أسماء المرضى وأي نص يبدأ بـ = + - @ \t \r
+// قد يُنفَّذ كـ formula في Excel — يُمنع بإضافة ' كبادئة
+// ═══════════════════════════════════════════════
+function sanitizeCell(value: string): string {
+    if (!value) return '';
+    const firstChar = value[0];
+    if (firstChar && ['+', '-', '=', '@', '\t', '\r'].includes(firstChar)) {
+        return `'${value}`;
+    }
+    return value;
+}
+
 // تسجيل عملية التصدير في Audit Log
 async function logExportAudit(
     exportType: 'invoices' | 'patients',
@@ -47,8 +61,9 @@ export async function exportInvoicesToExcel(
 ) {
     const XLSX = await import('xlsx');
     const rows = invoices.map(inv => ({
-        'رقم الفاتورة': inv.invoiceNumber,
-        'التاريخ': inv.invoiceDate,
+        // أرقام الفواتير آمنة (تبدأ بـ INV-) لكن نُعقّمها احتياطاً
+        'رقم الفاتورة': sanitizeCell(inv.invoiceNumber ?? ''),
+        'التاريخ': sanitizeCell(inv.invoiceDate ?? ''),
         'الإجمالي': inv.total,
         'المدفوع': inv.totalPaid,
         'المتبقي': inv.balance,
@@ -77,12 +92,13 @@ export async function exportPatientsToExcel(
 ) {
     const XLSX = await import('xlsx');
     const rows = patients.map(p => ({
-        'الاسم': p.fullName,
-        'رقم الهاتف': p.phone,
-        'تاريخ الميلاد': p.birthDate ?? '',
-        'فصيلة الدم': p.bloodType ?? '',
+        // FIXED: تطبيق sanitizeCell على كل حقل نصي قد يأتي من إدخال المستخدم
+        'الاسم': sanitizeCell(p.fullName ?? ''),
+        'رقم الهاتف': sanitizeCell(p.phone ?? ''),
+        'تاريخ الميلاد': sanitizeCell(p.birthDate ?? ''),
+        'فصيلة الدم': sanitizeCell(p.bloodType ?? ''),
         'النوع': p.gender === 'male' ? 'ذكر' : p.gender === 'female' ? 'أنثى' : '',
-        'تاريخ التسجيل': p.createdAt?.slice(0, 10) ?? '',
+        'تاريخ التسجيل': sanitizeCell(p.createdAt?.slice(0, 10) ?? ''),
     }));
 
     const ws = XLSX.utils.json_to_sheet(rows);

@@ -177,21 +177,17 @@ export class BillingRepository {
         if (error) throw error;
     }
 
+    // FIXED: استبدال المنطق اليدوي المعرّض لـ race condition
+    // باستخدام RPC يعتمد على invoice_seq sequence في PostgreSQL
     async getNextInvoiceNumber(): Promise<string> {
         const { data, error } = await supabase
-            .from('invoices')
-            .select('invoice_number')
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-        if (error) throw error;
-        if (!data?.invoice_number) return 'INV-0001';
-        const regex = /(\d+)$/;
-        const match = regex.exec(data.invoice_number);
-        const next = match?.[1]
-            ? (parseInt(match[1], 10) + 1).toString().padStart(4, '0')
-            : '0001';
-        return `INV-${next}`;
+            .rpc('get_next_invoice_number');
+        if (error) throw new AppError(
+            'Failed to generate invoice number',
+            ErrorCode.INTERNAL_ERROR,
+            error
+        );
+        return data as string;
     }
 
     private mapFromDb(row: InvoiceDTO): Invoice {

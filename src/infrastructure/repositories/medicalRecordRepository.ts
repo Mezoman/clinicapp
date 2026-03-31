@@ -51,7 +51,7 @@ export class MedicalRecordRepository {
                 chief_complaint: record.chiefComplaint || '',
                 diagnosis: record.diagnosis || '',
                 treatment_done: record.treatmentDone || '',
-                teeth_chart: serializeTeethChart(teethChart),
+                teeth_chart: serializeTeethChart(teethChart) as unknown as string,
                 appointment_id: record.appointmentId || null,
                 treatment_plan: record.treatmentPlan || null,
                 prescription: record.prescription || null,

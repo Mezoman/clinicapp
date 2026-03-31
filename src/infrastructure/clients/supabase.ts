@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { configService } from '../config/ConfigService';
-import type { Database } from './database.schema';
+import type { Database } from '../../database.types';
 
 const supabaseUrl = configService.supabaseUrl;
 const supabaseAnonKey = configService.supabaseAnonKey;

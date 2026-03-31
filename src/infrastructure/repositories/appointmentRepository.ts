@@ -123,9 +123,9 @@ export class AppointmentRepository {
         const { data, error } = await supabase
             .from('appointments')
             .insert({
-                patient_id: appointment.patientId,
+                patient_id: appointment.patientId!,
                 appointment_date: appointment.date,
-                appointment_time: appointment.time,
+                appointment_time: appointment.time!,
                 duration: appointment.duration,
                 type: appointment.type,
                 status: appointment.status,
@@ -149,7 +149,7 @@ export class AppointmentRepository {
     async update(id: string, appointment: Partial<AppointmentProps>, _tx?: ITransactionContext): Promise<void> {
         const updateData = {
             ...(appointment.date && { appointment_date: appointment.date }),
-            ...(appointment.time !== undefined && { appointment_time: appointment.time }),
+            ...(appointment.time !== undefined && { appointment_time: appointment.time ?? '' }),
             ...(appointment.duration && { duration: appointment.duration }),
             ...(appointment.type && { type: appointment.type }),
             ...(appointment.status && { status: appointment.status }),

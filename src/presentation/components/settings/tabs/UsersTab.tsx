@@ -30,7 +30,7 @@ export const UsersTab: React.FC<{ isSuperAdmin: boolean }> = React.memo(({ isSup
                 logger.error('Failed to fetch admin users', error);
                 toast.error('فشل في تحميل قائمة المستخدمين');
             } else {
-                setUsers(data ?? []);
+                setUsers((data ?? []) as AdminUserRecord[]);
             }
         } catch (err) {
             logger.error('Error fetching users', err as Error);
